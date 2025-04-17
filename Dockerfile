@@ -1,26 +1,30 @@
 FROM ubuntu
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y python3 python3-pip python3-venv
+# Install system packages
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
+    tzdata
 
-# Install timezone package (optional like your friend)
-RUN apt-get install -y tzdata
-
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy all files to container
+# Copy all app files
 ADD . /app
 
-# Install Python dependencies
-RUN pip3 install --upgrade pip && pip3 install -r requirements.txt
+# Create a virtual environment and install dependencies
+RUN python3 -m venv venv && \
+    . venv/bin/activate && \
+    pip install --upgrade pip && \
+    pip install -r requirements.txt
 
-# Expose the Flask default port
+# Expose the Flask port
 EXPOSE 5000
 
-# Environment variable for Flask
+# Set environment variables
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
-# Start the Flask app
-ENTRYPOINT ["flask", "run"]
+# Activate venv and start Flask
+CMD ["/bin/bash", "-c", ". venv/bin/activate && flask run"]
