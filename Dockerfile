@@ -1,33 +1,26 @@
-# Use a minimal base image with Python
-FROM python:3.10-slim
+FROM ubuntu
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# Install system dependencies
+RUN apt-get update && apt-get install -y python3 python3-pip python3-venv
+
+# Install timezone package (optional like your friend)
+RUN apt-get install -y tzdata
 
 # Set working directory
 WORKDIR /app
 
-# Install OS-level dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    default-libmysqlclient-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Copy all files to container
+ADD . /app
 
-# Copy and install Python dependencies
-COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Install Python dependencies
+RUN pip3 install --upgrade pip && pip3 install -r requirements.txt
 
-# Copy entire project into the container
-COPY . .
-
-# Set environment variables for Flask
-ENV FLASK_APP=app.py
-ENV FLASK_RUN_HOST=0.0.0.0
-ENV FLASK_ENV=production
-
-# Expose port Flask runs on
+# Expose the Flask default port
 EXPOSE 5000
 
+# Environment variable for Flask
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
+
 # Start the Flask app
-CMD ["flask", "run"]
+ENTRYPOINT ["flask", "run"]
