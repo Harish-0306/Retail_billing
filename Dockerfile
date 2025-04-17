@@ -20,7 +20,7 @@ RUN python3 -m venv venv && \
     ./venv/bin/pip install -r requirements.txt
 
 # Expose the Flask port
-EXPOSE 8080
+EXPOSE 5000
 
 # Command to run the Flask app
 CMD ["./venv/bin/flask", "run", "--host=0.0.0.0"]
