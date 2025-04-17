@@ -1,6 +1,3 @@
-Flask
 pymysql
-Flask==2.3.2
-
-pip freeze > requirements.txt
-
+Flask
+mysql-connector-python

@@ -1,6 +1,7 @@
-FROM ubuntu
+# Use official Ubuntu base image
+FROM ubuntu:latest
 
-# Install required packages
+# Set timezone and install dependencies
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
@@ -10,21 +11,16 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy your application code
+# Copy all files into the container
 ADD . /app
 
-# Set up virtual environment and install dependencies
+# Create virtual environment and install Python dependencies
 RUN python3 -m venv venv && \
-    . venv/bin/activate && \
-    pip install --upgrade pip && \
-    pip install -r requirements.txt
+    ./venv/bin/pip install --upgrade pip && \
+    ./venv/bin/pip install -r requirements.txt
 
-# Flask port
+# Expose the Flask port
 EXPOSE 5000
 
-# Set environment variables
-ENV FLASK_APP=app.py
-ENV FLASK_RUN_HOST=0.0.0.0
-
-# Run app
-CMD ["/bin/bash", "-c", ". venv/bin/activate && flask run"]
+# Command to run the Flask app
+CMD ["./venv/bin/flask", "run", "--host=0.0.0.0"]
